@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default_layout}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Upload</title>
+    <link rel="stylesheet" href="/css/register.css"> <!-- 외부 CSS 파일 연결 -->
+</head>
+<body>
+<div class="content" layout:fragment="content">
+<div class="container">
+    <h2>Upload Product</h2>
+    <form action="/uploadProduct" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="name">Product Name:</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="price">Product Price:</label>
+            <input type="number" id="price" name="price" min="0" step="0.01" required>
+        </div>
+
+        <div class="form-group">
+            <label for="imageFile">Product Image:</label>
+            <input type="file" id="imageFile" name="imageFile" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Upload</button>
+    </form>
+
+    <button class="btn btn-secondary" onclick="location.href='/main'">돌아가기</button>
+
+    <!-- 업로드 성공 메시지 표시 -->
+    <p th:if="${message}" th:text="${message}"></p>
+</div>
+</div>
+</body>
+</html>

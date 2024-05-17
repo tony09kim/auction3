@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>실시간 채팅 앱</title>
+    <link rel="stylesheet" href="/css/chat.css" />
+</head>
+<body>
+<div class="chat-container">
+    <div class="chat-window">
+        <div class="chat-header">
+            <h2>실시간 채팅</h2>
+        </div>
+        <div class="message-area" id="messageArea">
+            <!-- 메시지가 표시될 곳 -->
+        </div>
+        <div class="input-area">
+            <input type="text" id="messageInput" placeholder="메시지를 입력하세요...">
+            <button onclick="sendMessage()">전송</button>
+        </div>
+    </div>
+</div>
+<div class="button-container">
+    <button class="btn-secondary" onclick="location.href='/main'">돌아가기</button>
+</div>
+<script>
+    const pathSegments = window.location.pathname.split('/');
+    const productId = pathSegments[pathSegments.length - 1]; // URL에서 productId 추출
+    let socket = new WebSocket("ws://localhost/websocket/" + productId); // 채팅방 ID로 웹소켓 연결
+
+    socket.onopen = function (e) {
+        console.log('서버에 연결되었습니다.');
+    };
+
+    socket.onerror = function (e) {
+        console.error('서버 연결 오류:', e);
+    };
+
+    socket.onmessage = function (e) {
+        let messageArea = document.getElementById('messageArea');
+        let newMessage = document.createElement('div');
+        newMessage.classList.add('message');
+        newMessage.textContent = e.data;
+        messageArea.appendChild(newMessage);
+    };
+
+    function sendMessage() {
+        let messageInput = document.getElementById('messageInput');
+        let content = messageInput.value.trim();
+        if (content !== '') {
+            socket.send(content);
+            messageInput.value = '';
+        }
+    }
+</script>
+
+</body>
+</html>

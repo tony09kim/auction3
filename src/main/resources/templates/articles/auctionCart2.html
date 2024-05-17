@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default_layout}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/cart.css" />
+    <title>My Cart</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var countdownElements = document.querySelectorAll('.countdown');
+            countdownElements.forEach(function(element) {
+                var createdTime = new Date(element.getAttribute('data-created-time'));
+                var countdownTime = new Date(createdTime.getTime() + (1 * 60 * 60 * 1000)); // 1시간 추가
+
+                function updateCountdown() {
+                    var now = new Date().getTime();
+                    var distance = countdownTime - now;
+
+                    if (distance <= 0) {
+                        clearInterval(countdownInterval);
+                        element.innerHTML = "만료되었습니다.";
+                        showAppropriateButton(element, true);
+                        return;
+                    }
+
+                    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                    element.innerHTML = hours + "시간 " + minutes + "분 " + seconds + "초";
+                    showAppropriateButton(element, false);
+                }
+
+                var countdownInterval = setInterval(updateCountdown, 1000);
+                updateCountdown();
+            });
+
+            function showAppropriateButton(element, expired) {
+                var parentRow = element.closest('tr');
+                var viewButton = parentRow.querySelector('.view_btn2');
+
+                if (expired) {
+                    viewButton.textContent = "돈 받기";
+                    viewButton.classList.add('money_btn');
+                    viewButton.addEventListener('click', redirectToChat);
+                } else {
+                    viewButton.textContent = "진행중";
+                    viewButton.classList.remove('money_btn');
+                    viewButton.removeEventListener('click', redirectToChat);
+                }
+            }
+
+            function redirectToChat() {
+                var button = event.target;
+                var parentRow = button.closest('tr');
+                var productId = parentRow.querySelector('td[style="display:none;"]').textContent;
+                window.location.href = '/chat/' + productId; // 동적 URL 생성
+            }
+        });
+    </script>
+</head>
+<body>
+<div class="content" layout:fragment="content">
+
+
+    <h2>내가 올린 제품</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>제품 이미지</th>
+            <th>제품 이름</th>
+            <th>현재 최고가</th>
+            <th>사는 사람의 아이디</th>
+            <th style="display:none;">Product ID</th>
+            <th>남은 시간</th>
+            <th>작업</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Iterate over the List of JoinDto objects -->
+        <tr th:each="item : ${myList}">
+            <td><img th:src="${item.imageUrl}" alt="Product Image"></td>
+            <td th:text="${item.productName}"></td>
+            <td th:text="${item.productPrice}"></td>
+            <td th:text="${item.finalBuyerId}"></td>
+            <td style="display:none;" th:text="${item.productId}"></td>
+            <td><div th:attr="data-created-time=${item.formattedCreatedTime}"
+                     th:id="'countdown-' + ${item.productId}"
+                     class="countdown"></div>
+            </td>
+            <td><button class="view_btn2" >진행중</button></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <button class="btn-secondary" onclick="location.href='/main'">돌아가기</button>
+</div>
+</body>
+</html>

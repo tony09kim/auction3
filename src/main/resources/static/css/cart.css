@@ -1,0 +1,78 @@
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+}
+
+h2 {
+    font-size: 2rem;
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px; /* 테이블 아래 간격 */
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th, td {
+    padding: 10px;
+    text-align: center;
+}
+
+img {
+    max-width: 300px;
+    max-height: 300px;
+}
+
+td {
+    font-size: 1.2rem;
+}
+
+.countdown {
+    color: red;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+button {
+    padding: 8px 12px;
+    font-size: 1rem;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.btn-secondary {
+    background-color: #718292;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background-color: #0056b3;
+}
+
+/* 내가 올린 제품 테이블과 My Cart 테이블 간격 조정 */
+.content table + table {
+    margin-top: 40px;
+}
+
+/* 내가 올린 제품 테이블과 h2 간격 조정 */
+.content h2 + table {
+    margin-top: 20px;
+}

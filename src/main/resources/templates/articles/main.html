@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+<html xmlns:th="www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default_layout}">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/css.css" />
+<!--    <script src="/js/hour.js"></script>-->
+    <title>Album</title>
+</head>
+<body>
+<div class="content" layout:fragment="content">
+
+<section class="first_section">
+    <div class="container">
+        <h2>경매 사이트</h2>
+        <p>Come on! and Get What you want!</p>
+        <div class="buttons">
+            <button class="main_btn" th:onclick="|location.href='@{/register}'|">경매품 등록하기</button>
+            <button class="secondary_btn" th:onclick="|location.href='@{/myProduct}'|">나의 경매품 보러가기</button>
+        </div>
+    </div>
+</section>
+<section class="second_section">
+    <div class="card" th:each="post:${postsPages}">
+        <div class="card_img">
+            <img th:src="${post.imageUrl}" alt="no image">
+        </div>
+        <div class="card_content">
+            <div class="card_text"><p th:text="${post.productName}">타이틀 1</p></div>
+            <div class="card_extra">
+                <div class="buttons">
+<!--                    <form th:action="@{/show}" method="get">-->
+                        <button class="view_btn" th:attr="data-created-time=${post.formattedCreatedTime}, data-product-id=${post.productId}">보기</button>
+<!--                    <input type="hidden" name="showId" th:value="${post.productId}">-->
+<!--                    </form>-->
+                </div>
+                <br><br>
+                <div th:attr="data-created-time=${post.formattedCreatedTime}"
+                     th:id="'countdown-' + ${post.productId}"
+                     class="countdown"></div>
+            </div>
+        </div>
+    </div>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        document.addEventListener('DOMContentLoaded', function() {
+            var countdownElements = document.querySelectorAll('.countdown');
+            countdownElements.forEach(function(element) {
+                var createdTime = new Date(element.getAttribute('data-created-time'));
+                var countdownTime = new Date(createdTime.getTime() + (1 * 60 * 60 * 1000)); // 1시간 추가
+
+                function updateCountdown() {
+                    var now = new Date().getTime();
+                    var distance = countdownTime - now;
+
+                    if (distance < 0) {
+                        clearInterval(countdownInterval);
+                        element.innerHTML = "만료되었습니다.";
+                        return;
+                    }
+
+                    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                    element.innerHTML = hours + "시간 " + minutes + "분 " + seconds + "초";
+                }
+
+                var countdownInterval = setInterval(updateCountdown, 1000);
+                updateCountdown();
+            });
+            var viewButtons = document.querySelectorAll('.view_btn');
+        viewButtons.forEach(function(button) {
+            button.addEventListener('click', function() {
+                var createdTime = new Date(button.getAttribute('data-created-time'));
+                var expirationTime = new Date(createdTime.getTime() + (1 * 60 * 60 * 1000)); // 1시간 추가
+                var now = new Date().getTime();
+
+               if (now > expirationTime) {
+                    alert("만료된 상품입니다.");
+                    return;
+                }
+
+                var productId = button.getAttribute('data-product-id');
+                window.location.href = '/show?showId=' + productId;
+            });
+        });
+    });
+        /*]]>*/
+    </script>
+    <div class="page">
+        <!-- 첫번째 페이지로 이동 -->
+        <a th:href="@{/main(page=1)}">첫 페이지 </a>
+
+        <!-- 이전 링크 활성화 비활성화 -->
+        <a th:href="${postsPages.first} ? '#' : @{/main(page=${postsPages.number})}"> 이전 </a>
+
+        <!-- 페이지 번호 링크(현재 페이지는 숫자만)
+                for(int page=startPage; page<=endPage; page++)-->
+        <span th:each="page: ${#numbers.sequence(startPage, endPage)}">
+
+    		<!-- 현재페이지는 링크 없이 숫자만 -->
+                    <span th:if="${page == postsPages.number + 1}" th:text="${page}"></span>
+            <!-- 현재페이지 링크 X, 다른 페이지번호에는 링크를 보여준다 -->
+                <span th:unless="${page == postsPages.number + 1}">
+            <a th:href="@{/main(page=${page})}" th:text="${page}"></a>
+                </span>
+            </span>
+        <!-- 다음 링크 활성화 비활성화 -->
+        <a th:href="${postsPages.last} ? '#' : @{/main(page=${postsPages.number + 2})}"> 다음 </a>
+        <!-- 마지막 페이지로 이동 -->
+        <a th:href="@{/main(page=${postsPages.totalPages})}"> 마지막 페이지</a>
+    </div>
+</section>
+<br>
+
+
+<script src="https://kit.fontawesome.com/6b5dc2591f.js" crossorigin="anonymous"></script>
+</div>
+</body>
+</html>

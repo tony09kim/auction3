@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default_layout}">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/style.css" /> <!-- 스타일 시트 링크 -->
+    <title>Product Detail</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var countdownElements = document.querySelectorAll('.countdown');
+
+            countdownElements.forEach(function(element) {
+                var createdTime = new Date(element.getAttribute('data-created-time'));
+                var countdownTime = new Date(createdTime.getTime() + (1 * 60 * 60 * 1000)); // 1시간 추가
+
+                function updateCountdown() {
+                    var now = new Date().getTime();
+                    var distance = countdownTime - now;
+
+                    if (distance <= 0) {
+                        clearInterval(countdownInterval);
+                        element.innerHTML = "만료되었습니다.";
+                        disableButtons(); // 시간 만료 시 버튼 비활성화
+                        element.style.color = 'red'; // 텍스트 색상을 빨간색으로 변경
+                        element.style.fontSize = '36px'; // 글자 크기를 크게 변경
+                        element.style.fontWeight = 'bold'; // 글자 굵기 설정
+                        return;
+                    }
+
+                    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                    element.innerHTML = hours + "시간 " + minutes + "분 " + seconds + "초";
+                }
+
+                var countdownInterval = setInterval(updateCountdown, 1000);
+                updateCountdown();
+            });
+
+            function disableButtons() {
+                var plusBtn = document.getElementById('plusBtn');
+                var minusBtn = document.getElementById('minusBtn');
+                var submitBtn = document.getElementById('submitBtn');
+
+                plusBtn.disabled = true;
+                minusBtn.disabled = true;
+                submitBtn.disabled = true;
+            }
+
+            var maxPrice = parseInt(document.querySelector('.product_price').textContent.replace('현재 최고가격: ', '').replace('원', ''));
+            var productPrice = maxPrice + 1000;
+
+            function updatePrice() {
+                var priceElement = document.getElementById('productPrice');
+                priceElement.textContent = productPrice + '원';
+            }
+
+            function increasePrice() {
+                if (!isAuctionExpired()) {
+                    productPrice += 1000;
+                    updatePrice();
+                    updateButtons();
+                }
+            }
+
+            function decreasePrice() {
+                if (!isAuctionExpired() && productPrice > maxPrice + 1000) {
+                    productPrice -= 1000;
+                    updatePrice();
+                    updateButtons();
+                }
+            }
+
+            function submitForm() {
+                if (!isAuctionExpired()) {
+                    if (productPrice <= maxPrice) {
+                        alert("현재 최고가격보다 높은 금액을 입력하세요.");
+                        return;
+                    }
+                    var priceInput = document.getElementById('priceInput');
+                    priceInput.value = productPrice;
+
+                    // 폼 제출
+                    document.getElementById('productForm').submit();
+                }
+            }
+
+            function isAuctionExpired() {
+                var countdownElement = document.querySelector('.countdown');
+                return countdownElement.innerHTML === "만료되었습니다.";
+            }
+
+            function updateButtons() {
+                var minusBtn = document.getElementById('minusBtn');
+                if (productPrice <= maxPrice + 1000) {
+                    minusBtn.disabled = true;
+                } else {
+                    minusBtn.disabled = false;
+                }
+            }
+
+            // 초기화
+            updatePrice();
+            updateButtons();
+
+            // 이벤트 리스너 등록
+            document.getElementById('plusBtn').addEventListener('click', increasePrice);
+            document.getElementById('minusBtn').addEventListener('click', decreasePrice);
+            document.getElementById('submitBtn').addEventListener('click', submitForm);
+        });
+    </script>
+
+</head>
+<body>
+<div class="content" layout:fragment="content">
+    <section>
+
+        <img th:src="${dto.imageUrl}" alt="상품 이미지" class="product_image">
+
+        <section class="product_detail">
+            <div class="product_info">
+                <h2 th:text="${dto.productName}">상품명</h2>
+                <p class="product_price" th:text="'현재 최고가격: ' + ${dto.productPrice} + '원'"></p>
+                <div th:attr="data-created-time=${dto.formattedCreatedTime}"
+                     th:id="'countdown-' + ${dto.productId}"
+                     class="countdown"></div>
+            </div>
+        </section>
+        <section class="ddd">
+            <div class="container">
+                <h2>경매 참여하기</h2>
+                <p>갱신가 입력: <span id="productPrice"></span></p>
+
+                <div class="button-group">
+                    <button id="minusBtn">- 1000원</button>
+                    <button id="plusBtn">+ 1000원</button>
+                </div>
+                <form id="productForm" action="/submitProduct" method="get">
+                    <input type="hidden" id="priceInput" name="productPrice" value="0">
+                    <button id="submitBtn" type="button">제출하기</button>
+                </form>
+            </div>
+        </section>
+    </section>
+    <button class="btn btn-secondary" onclick="location.href='/main'">돌아가기</button>
+
+    <script src="https://kit.fontawesome.com/6b5dc2591f.js" crossorigin="anonymous"></script>
+</div>
+</body>
+</html>

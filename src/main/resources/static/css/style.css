@@ -1,0 +1,143 @@
+/* style.css */
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #23242c;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 150px;
+}
+
+.logo {
+    font-size: 2rem;
+    color: white;
+    font-weight: bold;
+    line-height: 2.5;
+}
+
+.logo i {
+    font-weight: 900;
+}
+
+.header_btn {
+    font-size: 2rem;
+    padding: 10px 20px;
+    background-color: transparent;
+    color: #f8f8f886;
+    border: 1px solid currentColor;
+    border-radius: 10px;
+}
+
+.header_btn:hover {
+    cursor: pointer;
+}
+
+.product_detail {
+    padding: 20px;
+}
+
+.product_info {
+    margin-top: 20px;
+    max-width: 100%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+
+.product_price {
+    font-size: 50px;
+    font-weight: bold;
+    color: #000000;
+    margin-top: 20px;
+}
+
+h2 {
+    color: #007bff;
+}
+
+.button-group {
+    margin-bottom: 20px;
+    text-align: center; /* 버튼 그룹 가운데 정렬 */
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    margin-right: 10px;
+    background-color: #007bff;
+    color: #ffffff;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+input[type="hidden"] {
+    display: none;
+}
+
+.container {
+    margin-top: 20px;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.container span {
+    font-size: 50px;
+}
+
+.countdown {
+    font-family: 'Arial', sans-serif;
+    font-size: 24px;
+    color: red;
+    padding: 5px;
+    border: 2px solid red;
+    border-radius: 5px;
+    display: inline-block;
+}
+
+footer {
+    background-color: #f8f9fa;
+    padding: 20px;
+    text-align: center;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+}
+.img box{
+    position: absoulte;
+}
+.product_image {
+    max-width: 30%; /* 이미지 최대 너비 설정 */
+    max-height:490px;
+    height: 80%;
+    margin-top: 20px;
+    float: left; /* 왼쪽으로 부유(floating) */
+    margin-right: 20px; /* 이미지 오른쪽 여백 추가 */
+    margin-left: 40px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.btn-secondary {
+    background-color: #718292;
+    text-align: center;
+    margin:left:20px;
+    margin:top:20px;
+}
